@@ -31,20 +31,80 @@ def createFichierLP(nomFichier,nombreVariables):
     monFichier.write("end")
     monFichier.close()
 
-def LLPrefEtu():
+def LLPrefEtu(nomFichier):
     LL = []
-    f = open("PrefEtu.txt", "r")
+    f = open(nomFichier, "r")
     for line in f.readlines():
         LL.append(line.split()[2:])
     f.close()
     return LL[1:]
 
-def LLPrefSpe():
+def LLPrefSpe(nomFichier):
     LL = []
-    f = open("PrefSpe.txt", "r")
+    f = open(nomFichier, "r")
     for line in f.readlines():
         LL.append(line.split()[2:])
     f.close()
     return LL[2:]
 
-print(LLPrefSpe())
+def LI(nomFichier):
+    L = []
+    f = open(nomFichier, "r")
+    for line in f.readlines():
+        L.append(line.split()[0])
+    f.close()
+    return L[1:]
+
+def LH(nomFichier):
+    L = []
+    f = open(nomFichier, "r")
+    for line in f.readlines():
+        L.append(line.split()[0])
+    f.close()
+    return L[2:]
+
+def Lcapacity(nomFichier):
+    L = []
+    f = open(nomFichier, "r")
+    t = f.readlines()
+    f.close()
+    return t[1].split()[1:]
+
+def CEtudiant(fichierEtu, fichierSpe):
+    Li = LI(fichierEtu)
+    Lh = LH(fichierSpe)
+    Lci = LLPrefEtu(fichierEtu)
+    Lch = LLPrefSpe(fichierSpe)
+    Lcap = Lcapacity(fichierSpe)
+    libres = {e for e in Li}
+    occup = [[] for i in range(len(Lh))]
+    
+    while len(libres) != 0:
+        for e1 in Li:
+            if e1 in libres:
+                ie1 = int(e1)
+                for e2 in Lci[ie1]:
+                    ie2 = int(e2)
+                    if occup[ie2] < Lcap[ie2]:
+                        occup[ie2].append(e1)
+                        libres.remove(e1)
+                        break
+                    else:
+                        if Lch[e2].index(occup[ie2][len(occup[ie2])-1]) > Lch[ie2].index(e1):
+                            tmp = occup[ie2].pop(len(occup[ie2])-1)
+                            occup[ie2].append(e1)
+                            libres.remove(e1)
+                            libres.add(tmp)
+
+    return occup
+
+
+#def Q4(affect, matriceE, matriceS):
+    """res = []
+
+    for L in affect:
+        for e in L:
+            for cours in """
+
+print(CEtudiant("PrefEtu.txt", "PrefSpe.txt"))
+
